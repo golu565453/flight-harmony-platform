@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -13,13 +12,26 @@ import {
   Luggage,
   Settings,
   ChevronRight,
+  Filter,
+  Search,
 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState('all');
 
   // Sample data
   const upcomingFlights = [
@@ -57,6 +69,106 @@ const Dashboard = () => {
       status: 'Completed',
     },
   ];
+
+  // Extended flights data for the flights tab
+  const allFlights = [
+    {
+      id: 'AH1234',
+      from: 'JFK',
+      fromCity: 'New York',
+      to: 'LAX',
+      toCity: 'Los Angeles',
+      date: 'Sep 28, 2023',
+      time: '10:00 AM',
+      status: 'Confirmed',
+      aircraft: 'Boeing 787',
+      terminal: 'T4',
+      gate: 'G12',
+    },
+    {
+      id: 'AH5678',
+      from: 'LAX',
+      fromCity: 'Los Angeles',
+      to: 'SFO',
+      toCity: 'San Francisco',
+      date: 'Oct 15, 2023',
+      time: '2:30 PM',
+      status: 'Confirmed',
+      aircraft: 'Airbus A321',
+      terminal: 'T1',
+      gate: 'G5',
+    },
+    {
+      id: 'AH9012',
+      from: 'SFO',
+      fromCity: 'San Francisco',
+      to: 'JFK',
+      toCity: 'New York',
+      date: 'Aug 05, 2023',
+      time: '6:15 PM',
+      status: 'Completed',
+      aircraft: 'Boeing 777',
+      terminal: 'T2',
+      gate: 'G22',
+    },
+    {
+      id: 'AH3456',
+      from: 'ORD',
+      fromCity: 'Chicago',
+      to: 'MIA',
+      toCity: 'Miami',
+      date: 'Jul 20, 2023',
+      time: '1:45 PM',
+      status: 'Completed',
+      aircraft: 'Airbus A320',
+      terminal: 'T3',
+      gate: 'G8',
+    },
+    {
+      id: 'AH7890',
+      from: 'ATL',
+      fromCity: 'Atlanta',
+      to: 'DFW',
+      toCity: 'Dallas',
+      date: 'Nov 10, 2023',
+      time: '8:20 AM',
+      status: 'Scheduled',
+      aircraft: 'Boeing 737',
+      terminal: 'T1',
+      gate: 'G3',
+    },
+    {
+      id: 'AH2345',
+      from: 'DEN',
+      fromCity: 'Denver',
+      to: 'SEA',
+      toCity: 'Seattle',
+      date: 'Nov 18, 2023',
+      time: '3:10 PM',
+      status: 'Scheduled',
+      aircraft: 'Airbus A321',
+      terminal: 'T5',
+      gate: 'G15',
+    },
+  ];
+
+  // Filter flights based on status
+  const filteredFlights = allFlights.filter(flight => {
+    if (selectedFilter === 'all') return true;
+    return flight.status.toLowerCase() === selectedFilter.toLowerCase();
+  });
+
+  // Search flights by ID, cities, or dates
+  const searchedFlights = filteredFlights.filter(flight => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      flight.id.toLowerCase().includes(query) ||
+      flight.fromCity.toLowerCase().includes(query) ||
+      flight.toCity.toLowerCase().includes(query) ||
+      flight.date.toLowerCase().includes(query)
+    );
+  });
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -323,7 +435,125 @@ const Dashboard = () => {
                 <CardDescription>View and manage your upcoming and past flights</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="py-20 text-center text-gray-500">Flight management interface would go here.</p>
+                <div className="space-y-6">
+                  {/* Search and Filter */}
+                  <div className="flex flex-col md:flex-row gap-4 justify-between">
+                    <div className="relative w-full md:w-72">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input 
+                        placeholder="Search by flight, city or date" 
+                        className="pl-10"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <Filter className="text-gray-500 h-4 w-4" />
+                      <span className="text-sm text-gray-500">Filter:</span>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant={selectedFilter === 'all' ? 'default' : 'outline'} 
+                          size="sm"
+                          onClick={() => setSelectedFilter('all')}
+                          className={selectedFilter === 'all' ? 'bg-airline-blue' : ''}
+                        >
+                          All
+                        </Button>
+                        <Button 
+                          variant={selectedFilter === 'scheduled' ? 'default' : 'outline'} 
+                          size="sm"
+                          onClick={() => setSelectedFilter('scheduled')}
+                          className={selectedFilter === 'scheduled' ? 'bg-airline-blue' : ''}
+                        >
+                          Scheduled
+                        </Button>
+                        <Button 
+                          variant={selectedFilter === 'confirmed' ? 'default' : 'outline'} 
+                          size="sm"
+                          onClick={() => setSelectedFilter('confirmed')}
+                          className={selectedFilter === 'confirmed' ? 'bg-airline-blue' : ''}
+                        >
+                          Confirmed
+                        </Button>
+                        <Button 
+                          variant={selectedFilter === 'completed' ? 'default' : 'outline'} 
+                          size="sm"
+                          onClick={() => setSelectedFilter('completed')}
+                          className={selectedFilter === 'completed' ? 'bg-airline-blue' : ''}
+                        >
+                          Completed
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Flights Table */}
+                  <div className="rounded-lg border overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-gray-50">
+                          <TableHead>Flight</TableHead>
+                          <TableHead>Route</TableHead>
+                          <TableHead className="hidden md:table-cell">Date & Time</TableHead>
+                          <TableHead className="hidden md:table-cell">Aircraft</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {searchedFlights.length > 0 ? (
+                          searchedFlights.map((flight) => (
+                            <TableRow key={flight.id} className="hover:bg-gray-50">
+                              <TableCell className="font-medium">{flight.id}</TableCell>
+                              <TableCell>
+                                <div className="flex flex-col">
+                                  <div className="flex items-center space-x-1">
+                                    <span className="font-medium">{flight.from}</span>
+                                    <span className="text-gray-500 text-xs">→</span>
+                                    <span className="font-medium">{flight.to}</span>
+                                  </div>
+                                  <span className="text-xs text-gray-500">{flight.fromCity} to {flight.toCity}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="hidden md:table-cell">
+                                <div className="flex flex-col">
+                                  <span>{flight.date}</span>
+                                  <span className="text-xs text-gray-500">{flight.time}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell className="hidden md:table-cell">
+                                <div className="flex flex-col">
+                                  <span>{flight.aircraft}</span>
+                                  <span className="text-xs text-gray-500">Terminal {flight.terminal}, Gate {flight.gate}</span>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  flight.status === 'Confirmed' ? 'bg-green-100 text-green-800' :
+                                  flight.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' :
+                                  'bg-gray-100 text-gray-800'
+                                }`}>
+                                  {flight.status}
+                                </span>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <Button variant="ghost" size="sm">
+                                  <ChevronRight size={16} />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                              No flights found matching your criteria
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
