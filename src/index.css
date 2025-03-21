@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 210 100% 50%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -35,19 +38,12 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -96,6 +92,84 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
   }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/90 backdrop-blur-md border border-white/20 shadow-sm;
+  }
+  
+  .glass-panel {
+    @apply bg-white/60 backdrop-blur-lg border border-white/30 shadow-md;
+  }
+  
+  .btn-primary {
+    @apply bg-airline-blue text-white px-6 py-2.5 rounded-md font-medium transition-all 
+           hover:bg-airline-blue/90 hover:shadow-md active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-airline-blue/50;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-airline-navy border border-gray-200 px-6 py-2.5 rounded-md font-medium 
+           transition-all hover:bg-gray-50 hover:shadow-sm active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-gray-200;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-md border border-gray-200 
+           focus:outline-none focus:ring-2 focus:ring-airline-blue/30 focus:border-transparent;
+  }
+  
+  .form-label {
+    @apply text-sm font-medium text-gray-700 mb-1.5;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #D1D5DB;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #9CA3AF;
+}
+
+/* Page transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+/* Utility classes for animations */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-3px);
 }
